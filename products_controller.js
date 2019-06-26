@@ -1,9 +1,18 @@
 module.exports = {
-    create: ( req, res, next ) => {
-      const dbInstance = req.app.get('db');
-      const { name, description, price, image_url } = req.body;  
+  update: (req, res) => {
+    const dbInstance = req.app.get('db')
+    const { id } = req.params
+    const { name, description, price, image_url } = req.body
+    console.log(dbInstance)
+    dbInstance.update_product(id, name, description, price, image_url).then(response => {
+        res.status(200).send('Update completed')
+    }).catch(err => req.status(500).send('Error, there was a problem processing your request.'))
+},
+  create: ( req, res, next ) => {
+    const dbInstance = req.app.get('db');
+    const { name, description, price, image_url } = req.body;  
 
-      dbInstance.create_product([ name, description, price, image_url ])
+      dbInstance.create_product( name, description, price, image_url )
         .then( () => res.sendStatus(200) )
         .catch( err => {
           res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
@@ -35,18 +44,6 @@ module.exports = {
         } );
     },
   
-    update: ( req, res, next ) => {
-      const dbInstance = req.app.get('db');
-      const { params, query } = req;
-
-
-      dbInstance.update_product([params.id ,query.desc ])
-        .then( () => res.sendStatus(200) )
-        .catch( err => {
-          res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-          console.log(err)
-        } );
-    },
   
     delete: ( req, res, next ) => {
       const dbInstance = req.app.get('db');
